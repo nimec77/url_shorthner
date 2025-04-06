@@ -42,7 +42,7 @@ where
         tracing_subscriber::registry()
             .with(
                 tracing_subscriber::EnvFilter::try_from_default_env()
-                    .unwrap_or_else(|_| "urlshortner=debug,tower_http=debug".into()),
+                    .unwrap_or_else(|_| "url_shortener=debug,tower_http=debug".into()),
             )
             .with(tracing_subscriber::fmt::layer())
             .init();
@@ -62,7 +62,7 @@ where
     Q: GetFullUrlRepository + Send + Sync + 'static,
 {
     Router::new()
-        .route("/:id", get(get_full_url))
+        .route("/{id}", get(get_full_url))
         .route("/", post(shorten_url))
         .layer(
             TraceLayer::new_for_http()
@@ -136,7 +136,11 @@ where
 
 #[cfg(test)]
 mod tests {
-    use axum::{body::Body, extract::Request, http::{header, Method, StatusCode}};
+    use axum::{
+        body::Body,
+        extract::Request,
+        http::{Method, StatusCode, header},
+    };
     use dashmap::DashMap;
     use http_body_util::BodyExt;
     use tower::ServiceExt;

@@ -8,15 +8,15 @@
         {
             "type": "lldb",
             "request": "launch",
-            "name": "Debug executable 'urlshorthner'",
+            "name": "Debug executable 'url_shortener'",
             "cargo": {
                 "args": [
                     "build",
-                    "--bin=urlshorthner",
-                    "--package=urlshorthner"
+                    "--bin=url_shortener",
+                    "--package=url_shortener"
                 ],
                 "filter": {
-                    "name": "urlshorthner",
+                    "name": "url_shortener",
                     "kind": "bin"
                 }
             },
@@ -26,16 +26,16 @@
         {
             "type": "lldb",
             "request": "launch",
-            "name": "Debug unit tests in executable 'urlshorthner'",
+            "name": "Debug unit tests in executable 'url_shortener'",
             "cargo": {
                 "args": [
                     "test",
                     "--no-run",
-                    "--bin=urlshorthner",
-                    "--package=urlshorthner"
+                    "--bin=url_shortener",
+                    "--package=url_shortener"
                 ],
                 "filter": {
-                    "name": "urlshorthner",
+                    "name": "url_shortener",
                     "kind": "bin"
                 }
             },
