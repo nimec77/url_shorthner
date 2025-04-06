@@ -6,6 +6,7 @@ use crate::app::{
     command::create_short_url::CreateShortUrlRepository, query::get_full_url::GetFullUrlRepository,
 };
 
+#[derive(Debug, Clone)]
 pub struct InMemoryRepository {
     store: Arc<DashMap<String, String>>,
 }

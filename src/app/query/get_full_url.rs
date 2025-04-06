@@ -17,7 +17,7 @@ where
         Self { repository }
     }
 
-    pub fn execute(&self, id: &str) -> Result<String, String> {
+    pub async fn execute(&self, id: &str) -> Result<String, String> {
         self.repository.get(id)
     }
 }
@@ -46,7 +46,7 @@ mod tests {
         let get_full_url = GetFullUrlQuery::new(repository);
 
         // When
-        let result = get_full_url.execute("123");
+        let result = get_full_url.execute("123").await;
 
         // Then
         assert_eq!(result, Ok("https://www.google.com".to_owned()));
@@ -61,7 +61,7 @@ mod tests {
         let get_full_url = GetFullUrlQuery::new(repository);
 
         // When
-        let result = get_full_url.execute("123");
+        let result = get_full_url.execute("123").await;
 
         // Then
         assert_eq!(result, Ok("https://www.google.com".to_owned()));
@@ -77,8 +77,8 @@ mod tests {
         let get_full_url = GetFullUrlQuery::new(repository);
 
         // When
-        let result1 = get_full_url.execute("123");
-        let result2 = get_full_url.execute("456");
+        let result1 = get_full_url.execute("123").await;
+        let result2 = get_full_url.execute("456").await;
 
         // Then
         assert_eq!(result1, Ok("https://www.google.com".to_owned()));
