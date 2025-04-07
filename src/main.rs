@@ -9,6 +9,7 @@ use ports::http_api::Server;
 pub mod adapters;
 pub mod app;
 pub mod di;
+pub mod error;
 pub mod id_provider;
 pub mod ports;
 

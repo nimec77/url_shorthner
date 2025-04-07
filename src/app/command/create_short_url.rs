@@ -1,7 +1,9 @@
-use crate::id_provider::IdProvider;
+use url::Url;
+
+use crate::{error::AppError, id_provider::IdProvider};
 
 pub trait CreateShortUrlRepository {
-    fn save(&self, full_url: String, id: String) -> Result<(), String>;
+    fn save<'a>(&'a self, full_url: String, id: String) -> std::pin::Pin<Box<dyn std::future::Future<Output = Result<(), AppError>> + Send + 'a>>;
 }
 
 pub struct CreateShortUrlCommand<I, R>
@@ -25,9 +27,10 @@ where
         }
     }
 
-    pub async fn execute(&self, full_url: String) -> Result<String, String> {
+    pub async fn execute(&self, full_url: &str) -> Result<String, AppError> {
+        let parsed_url = Url::parse(full_url).map_err(|_| AppError::UrlParseError)?;
         let id = self.id_provider.provide();
-        self.repository.save(full_url, id.clone())?;
+        self.repository.save(parsed_url.to_string(), id.clone()).await?;
 
         Ok(id)
     }
@@ -56,7 +59,7 @@ mod tests {
 
         // When
         let result = create_short_url
-            .execute("https://www.google.com".to_owned())
+            .execute("https://www.google.com")
             .await;
 
         // Then
@@ -73,12 +76,12 @@ mod tests {
 
         // When
         let result1 = create_short_url
-            .execute("https://www.google.com".to_owned())
+            .execute("https://www.google.com")
             .await
             .unwrap();
 
         let result2 = create_short_url
-            .execute("https://www.example.com".to_owned())
+            .execute("https://www.example.com")
             .await
             .unwrap();
 
@@ -96,13 +99,13 @@ mod tests {
 
         // When
         let id = create_short_url
-            .execute("https://www.google.com".to_owned())
+            .execute("https://www.google.com")
             .await
             .unwrap();
 
         // Then
         assert_eq!(store.len(), 1);
         let full_url = store.get(&id).unwrap();
-        assert_eq!(full_url.value(), "https://www.google.com");
+        assert_eq!(full_url.value(), "https://www.google.com/");
     }
 }

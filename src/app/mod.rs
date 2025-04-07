@@ -24,11 +24,11 @@ mod tests {
 
         // When
         let short_url = create_command
-            .execute("https://www.google.com".to_owned())
+            .execute("https://www.google.com")
             .await;
         let full_url = get_query.execute(&short_url.unwrap()).await.unwrap();
 
         // Then
-        assert_eq!(full_url, "https://www.google.com");
+        assert_eq!(full_url, "https://www.google.com/");
     }
 }
