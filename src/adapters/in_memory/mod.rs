@@ -1,5 +1,6 @@
-use std::{pin::Pin, sync::Arc};
+use std::sync::Arc;
 
+use async_trait::async_trait;
 use dashmap::DashMap;
 
 use crate::{
@@ -21,22 +22,20 @@ impl InMemoryRepository {
     }
 }
 
+#[async_trait]
 impl CreateShortUrlRepository for InMemoryRepository {
-    fn save<'a>(&'a self, full_url: String, id: String) -> Pin<Box<dyn Future<Output = Result<(), AppError>> + Send + 'a>> {
-        Box::pin(async move {
-            self.store.insert(id, full_url);
-            Ok(())
-        })
+    async fn save(&self, full_url: String, id: String) -> Result<(), AppError> {
+        self.store.insert(id, full_url);
+
+        Ok(())
     }
 }
 
 impl GetFullUrlRepository for InMemoryRepository {
-    fn get<'a>(&'a self, id: &'a str) -> Pin<Box<dyn Future<Output = Result<String, AppError>> + Send + 'a>> {
-        Box::pin(async move {
-            self.store
-                .get(id)
-                .map(|url| url.clone())
-                .ok_or(AppError::NotFound)
-        })
+    async fn get(&self, id: &str) -> Result<String, AppError> {
+        self.store
+            .get(id)
+            .map(|url| url.clone())
+            .ok_or(AppError::NotFound)
     }
 }

@@ -1,10 +1,7 @@
 use crate::error::AppError;
 
 pub trait GetFullUrlRepository {
-    fn get<'a>(
-        &'a self,
-        id: &'a str,
-    ) -> std::pin::Pin<Box<dyn std::future::Future<Output = Result<String, AppError>> + Send + 'a>>;
+    fn get(&self, id: &str) -> impl std::future::Future<Output = Result<String, AppError>> + std::marker::Send;
 }
 
 pub struct GetFullUrlQuery<R>
@@ -29,7 +26,7 @@ where
 
 #[cfg(test)]
 mod tests {
-    use std::{pin::Pin, sync::Arc};
+    use std::sync::Arc;
 
     use dashmap::DashMap;
 
@@ -43,11 +40,8 @@ mod tests {
         struct FakeRepository;
 
         impl GetFullUrlRepository for FakeRepository {
-            fn get<'a>(
-                &'a self,
-                _id: &'a str,
-            ) -> Pin<Box<dyn Future<Output = Result<String, AppError>> + Send + 'a>> {
-                Box::pin(async move { Ok("https://www.google.com".to_owned()) })
+            async fn get(&self, _id: &str) -> Result<String, AppError> {
+                Ok("https://www.google.com".to_owned())
             }
         }
         let repository = FakeRepository;

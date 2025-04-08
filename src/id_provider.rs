@@ -1,3 +1,4 @@
+#[mockall::automock]
 pub trait IdProvider {
     fn provide(&self) -> String;
 }
